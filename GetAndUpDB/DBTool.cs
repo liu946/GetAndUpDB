@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,17 +12,29 @@ namespace GetAndUpDB
         */
     class DBTool
     {
-       
-        /* 
-            初始化，建立connect保存
-            */
-        public DBTool(string _dbserver,string _username,string _password)
+        SqlConnection sqlConnection;
+
+        /// <summary>
+        /// 初始化，建立connect保存
+        /// </summary>
+        public DBTool(string _dbserver,string _database,string _username,string _password)
         {
             // 建立connect 保存
+            string connString = "server=" + _dbserver + ";database=" + _database + ";uid=" + _username + ";pwd=" + _password + ";";
+            sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
         }
-        /*
-            使用主键查数据
-        */
+        ~DBTool()
+        {
+            close();
+        }
+        /// <summary>
+        /// 使用主键查数据
+        /// </summary>
+        public void close()
+        {
+            sqlConnection.Close();
+        }
         public Dictionary<string,string> find(string id)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
