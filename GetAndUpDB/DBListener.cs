@@ -40,6 +40,12 @@ namespace GetAndUpDB
             
             // todo ...
         }
+        public void syncupdate()
+        {
+
+            DBTool db = getnewdbtool();
+            autoid = db.syncUpdate();
+        }
         ~DBListener()
         {
             quitthread = true;
