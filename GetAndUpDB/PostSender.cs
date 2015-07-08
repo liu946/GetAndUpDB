@@ -20,12 +20,12 @@ namespace GetAndUpDB
         {
             server = _server;
         }
-        public void sendPost(Dictionary<string,string> data)
+        public void sendPost(Dictionary<string,object> data)
         {
             NameValueCollection nc = new NameValueCollection();
             foreach(var par in data)
             {
-                nc[par.Key] = par.Value;
+                nc[par.Key] = par.Value.ToString();
             }
             post(server, nc);
         }

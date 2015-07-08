@@ -14,15 +14,16 @@ namespace GetAndUpDB
     {
         SqlConnection sqlConnection;
         List<string> insterestionfield;
+        string connString;
         /// <summary>
         /// 初始化，建立connect保存
         /// </summary>
         public DBTool(string _dbserver,string _database,string _username,string _password)
         {
-            string insterestingfieldstr = "ID,AUTOID,NAME,AGE,TELE,EMAIL,TIME,DOCTOR_NAME";
+            string insterestingfieldstr = "ID,AUTOID,NAME,AGE,TELE,EMAIL,TIME,DOCTOR_NAME,REGISTER_ID";
             insterestionfield = new List<string>(insterestingfieldstr.Split(','));
             // 建立connect 保存
-            string connString = "server=" + _dbserver + ";database=" + _database + ";uid=" + _username + ";pwd=" + _password + ";";
+            connString = "server=" + _dbserver + ";database=" + _database + ";uid=" + _username + ";pwd=" + _password + ";";
             sqlConnection = new SqlConnection(connString);
             try
             {
@@ -47,10 +48,10 @@ namespace GetAndUpDB
         {
             
         }
-        public Dictionary<string,string> find(string id)
+        public Dictionary<string,object> find(string id)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>();
-            data["otherfield"] = "";
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data["OTHERS"] = "{";
             string sql = "SELECT * FROM V_DATA where ID = "+id+";";
             SqlCommand sqlCmd = new SqlCommand(sql, sqlConnection);
             SqlDataReader dr = sqlCmd.ExecuteReader();
@@ -63,9 +64,11 @@ namespace GetAndUpDB
                 }
                 else
                 {
-                    data["otherfield"] += "{" + dr.GetName(i) + ":" + dr[dr.GetName(i)].ToString() + "}";
+                    data["OTHERS"] += dr.GetName(i) + ":\"" + dr[dr.GetName(i)].ToString() + "\",";
                 }
             }
+
+            data["OTHERS"] += "}";
             return data;
         }
         /*
@@ -99,17 +102,17 @@ namespace GetAndUpDB
         /*
             返回增量数组
         */
-        public List< Dictionary<string,string>> updateSelect(int autoid)
+        public List< Dictionary<string,object>> updateSelect(int autoid)
         {
-            List<Dictionary<string, string>> datalist = new List<Dictionary<string, string>>();
-            
+            List<Dictionary<string, object>> datalist = new List<Dictionary<string, object>>();
             
             string sql = "SELECT * FROM V_DATA where AUTOID > " + autoid + ";";
             SqlCommand sqlCmd = new SqlCommand(sql, sqlConnection);
             SqlDataReader dr = sqlCmd.ExecuteReader();
             while (dr.Read())
             {
-                Dictionary<string, string> data = new Dictionary<string, string>();data["otherfield"] = "";
+                Dictionary<string, object> data = new Dictionary<string, object>();
+                data["OTHERS"] = "{";
                 for (int i = 0; i < dr.FieldCount; i++)
                 {
                     
@@ -119,12 +122,38 @@ namespace GetAndUpDB
                     }
                     else
                     {
-                        data["otherfield"] += "{" + dr.GetName(i) + ":" + dr[dr.GetName(i)].ToString() + "}";
+                        data["OTHERS"] += "" + dr.GetName(i) + ":\"" + dr[dr.GetName(i)].ToString() + "\",";
                     }
+                }
+                data["OTHERS"] += "}";
+                datalist.Add(data);
+            }
+            dr.Close();
+            for (int i = 0; i < datalist.Count; i++)
+            {
+                datalist[i]["childitem"] = getchilditem(int.Parse(datalist[i]["ID"].ToString()));
+            }
+            return datalist;
+        }
+        public List<Dictionary<string,object>> getchilditem(int id)
+        {
+            List<Dictionary<string, object>> datalist = new List<Dictionary<string, object>>();
+            string sql = "SELECT * FROM V_DETAIL where id = "+id+";";
+            var sqlc= new SqlConnection(connString);
+            SqlCommand sqlCmd = new SqlCommand(sql, sqlConnection);
+            SqlDataReader dr = sqlCmd.ExecuteReader();
+            while (dr.Read())
+            {
+                Dictionary<string, object> data = new Dictionary<string, object>();
+                for (int i = 0; i < dr.FieldCount; i++)
+                {
+                   data[dr.GetName(i)] = dr[dr.GetName(i)].ToString(); ; 
                 }
                 datalist.Add(data);
             }
+            dr.Close();
             return datalist;
+            
         }
     }
 }

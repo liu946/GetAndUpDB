@@ -18,18 +18,18 @@ namespace GetAndUpDB
         private bool quitthread = false;
 
         // 更改数据库事件定义
-        public event EventHandler<Dictionary<string,string>> itemchanged;
-        public event EventHandler<List<Dictionary<string,string>>> mutiitemchanged;
+        public event EventHandler<Dictionary<string,object>> itemchanged;
+        public event EventHandler<List<Dictionary<string,object>>> mutiitemchanged;
         public DBListener()
         {
             config = new Dictionary<string, string>();
             autoid = 0;
-            config["server"] = "127.0.0.1";
+            config["server"] = "192.168.1.99";
             config["dbserver"] ="L-WIN10";
             config["dbname"] ="histest";
             config["dbusername"] ="root";
             config["dbpassword"] ="123456";
-            config["postserver"] = "127.0.0.1";
+            config["postserver"] = "http://192.168.1.99/dbAPI/index.php/Home/index/";
             // todo ...
         }
         /*
@@ -102,9 +102,19 @@ namespace GetAndUpDB
             }
             db.close();
         }
-        public void sendToServer(object o,Dictionary<string,string> data)
+        public void sendToServer(object o,Dictionary<string,object> data)
         {
-            PostSender ps = new PostSender(config["postserver"]);
+            Dictionary<string, object> _data = new Dictionary<string, object>(data);
+            // send child
+            PostSender pschild = new PostSender(config["postserver"] + "detal");
+            foreach (var pare in (List<Dictionary<string,object>>)_data["childitem"])
+            {
+                pschild.sendPost(pare);
+            }
+
+            _data.Remove("childitem");
+            // send item 
+            PostSender ps = new PostSender(config["postserver"]+"data");
             ps.sendPost(data);
         }
     }
