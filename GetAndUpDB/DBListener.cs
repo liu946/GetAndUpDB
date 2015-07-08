@@ -82,12 +82,11 @@ namespace GetAndUpDB
         public  void dealUpdate()
         {
             DBTool db = getnewdbtool();
-            PostSender ps = new PostSender(config["postserver"]);
+            
 
             var datalist = db.updateSelect(autoid);
             foreach (var item in datalist)
             {
-                ps.sendPost(item);
                 //  触发一个事件，传入item
                 if (itemchanged != null)
                 {
@@ -102,6 +101,11 @@ namespace GetAndUpDB
                 mutiitemchanged(this, datalist);
             }
             db.close();
+        }
+        public void sendToServer(object o,Dictionary<string,string> data)
+        {
+            PostSender ps = new PostSender(config["postserver"]);
+            ps.sendPost(data);
         }
     }
 }

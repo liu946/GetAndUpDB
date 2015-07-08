@@ -25,8 +25,10 @@ namespace GetAndUpDB
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // 绑定事件方法
             db = new DBListener();
             db.itemchanged += itemChangedHandler;
+            db.itemchanged += db.sendToServer; // 发送数据
         }
 
         private void itemChangedHandler(object sender, Dictionary<string, string> dataitem)
