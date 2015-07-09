@@ -21,7 +21,7 @@ string insterestingfieldstr = "ID,AUTOID,NAME,AGE,TELE,EMAIL,TIME,DOCTOR_NAME,RE
 
 
 DBListener - 25
-```
+``` C#
 config["server"] = "192.168.1.99";
 config["dbserver"] ="L-WIN10";
 config["dbname"] ="histest";
@@ -34,7 +34,7 @@ config["postserver"] = "http://192.168.1.99/dbAPI/index.php/Home/index/";
 
 使用事件绑定，当检测到数据库更新时，会执行绑定到itemchanged的方法。
 
-```
+``` C#
  private void Form1_Load(object sender, EventArgs e)
 {
     // 绑定事件方法
@@ -44,7 +44,7 @@ config["postserver"] = "http://192.168.1.99/dbAPI/index.php/Home/index/";
 }
 ```
 dataitem
-```
+``` javascript
 {ID:2,
 AUTOID:3,
 NAME:sang,
@@ -60,7 +60,7 @@ childitem:
 ```
 
 定义与使用
-```
+``` C#
 private void itemChangedHandlerExamplePrint(object sender, Dictionary<string, object> dataitem)
 {
     Console.WriteLine("Handle the itemchanged event\n");
