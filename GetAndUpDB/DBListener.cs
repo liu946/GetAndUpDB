@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace GetAndUpDB
 {
+
     /*
         刷新方式监听数据库修改
         */
@@ -16,20 +17,22 @@ namespace GetAndUpDB
         int refreshtime = 5000;
         int autoid;
         private bool quitthread = false;
-
+        // 定义委托
+        public delegate void itemchangedHandle(object sender,Dictionary<string,object> e);
+        public delegate void mutiitemchangedHandle(object sender,List<Dictionary<string,object>> e);
         // 更改数据库事件定义
-        public event EventHandler<Dictionary<string,object>> itemchanged;
-        public event EventHandler<List<Dictionary<string,object>>> mutiitemchanged;
+        public event itemchangedHandle itemchanged;
+        public event mutiitemchangedHandle mutiitemchanged;
         public DBListener()
         {
             config = new Dictionary<string, string>();
             autoid = 0;
-            config["server"] = "192.168.1.99";
+            //config["server"] = "http://123.56.128.183:88/";
             config["dbserver"] ="L-WIN10";
             config["dbname"] ="histest";
             config["dbusername"] ="root";
             config["dbpassword"] ="123456";
-            config["postserver"] = "http://192.168.1.99/dbAPI/index.php/Home/index/";
+            config["postserver"] = "http://123.56.128.183:88/dbAPI/index.php/Home/index/";
             // todo ...
         }
         /*
